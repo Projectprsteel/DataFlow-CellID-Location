@@ -1,0 +1,444 @@
+[
+    {
+        "id": "fa07b5a2.555818",
+        "type": "subflow",
+        "name": "Errors Subflow",
+        "info": "",
+        "in": [
+            {
+                "x": 67.00000095367432,
+                "y": 150.00000381469727,
+                "wires": [
+                    {
+                        "id": "5cd9d678.e59268"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 1707.0000019073486,
+                "y": 178.00000381469727,
+                "wires": [
+                    {
+                        "id": "f3749938.aa9e58",
+                        "port": 0
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "5cd9d678.e59268",
+        "type": "function",
+        "z": "fa07b5a2.555818",
+        "name": "",
+        "func": "node.error(msg.payload);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "dependencies": [],
+        "x": 307.451416015625,
+        "y": 188.9548568725586,
+        "wires": [
+            [
+                "6c946a99.2bb504"
+            ]
+        ]
+    },
+    {
+        "id": "6c946a99.2bb504",
+        "type": "function",
+        "z": "fa07b5a2.555818",
+        "name": "",
+        "func": "var ISODateTime = new Date().toISOString();\n\nvar values = {message  : msg.payload};\n\nmsg.payload = {\n    timestamp : ISODateTime,\n    class: \"error\",\n    object: context.global.properties._componentName + \"Component\",\n    data: values\n}; \n\nmsg.headers = undefined;\n\nmsg.endpoint = \"/messages/\" + \n    context.global.properties._org + \"/\" + \n    context.global.properties._project + \"~\" + \n    context.global.properties._env + \"/\" + \n    'errors';\n               \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "dependencies": [],
+        "x": 620.4514007568359,
+        "y": 191.95834732055664,
+        "wires": [
+            [
+                "90a8e6e1.518ef8"
+            ]
+        ]
+    },
+    {
+        "id": "90a8e6e1.518ef8",
+        "type": "delay",
+        "z": "fa07b5a2.555818",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 900.4549560546875,
+        "y": 186.95833587646484,
+        "wires": [
+            [
+                "f3749938.aa9e58"
+            ]
+        ]
+    },
+    {
+        "id": "f3749938.aa9e58",
+        "type": "dataflow-request",
+        "z": "fa07b5a2.555818",
+        "name": "",
+        "method": "use",
+        "endpoint": "",
+        "x": 1232.4444770812988,
+        "y": 188.95141983032227,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "21787462.a7059c",
+        "type": "tab",
+        "label": "Message I/O"
+    },
+    {
+        "id": "7a145377.4469bc",
+        "type": "dataflow-in",
+        "z": "21787462.a7059c",
+        "name": "",
+        "x": 123,
+        "y": 287.0000009536743,
+        "wires": [
+            [
+                "c2ab0a19.b665d8",
+                "7b0021ab.8e1d5"
+            ]
+        ]
+    },
+    {
+        "id": "b88d4f0d.e0894",
+        "type": "dataflow-out",
+        "z": "21787462.a7059c",
+        "name": "",
+        "x": 1781.0000915527344,
+        "y": 289.00003147125244,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "34ef29db.8a28b6",
+        "type": "comment",
+        "z": "21787462.a7059c",
+        "name": "README",
+        "info": "This `custom-component` template is designed to\nbe used as the starting point for a `type: custom`\nbroker component. By default, messages will pass\nfrom the `DataFlow IN` node to the `DataFlow Out`\nnode. Implement your own custom message processing\nby deleting the link between the in and out nodes\nand adding your own logic in between.\n\nIf you've added custom `properties` in your\nproject specification, those properties will\nbe available within any function node as\n`context.global.properties`.\n",
+        "x": 146,
+        "y": 51.999999046325684,
+        "wires": []
+    },
+    {
+        "id": "356a13d5.8c2a3c",
+        "type": "function",
+        "z": "21787462.a7059c",
+        "name": "",
+        "func": "//msg.url = \"https://www.googleapis.com/geolocation/v1/geolocate?key=[Google KEY]\";\n//msg.originalPayload = Object.assign({},msg.payload);\n\nmsg.headers = {\n    'Content-type' : 'application/json'\n    };\nmsg.payload = {\n    \"homeMobileCountryCode\": msg.originalPayload.data.mcc,\n    \"homeMobileNetworkCode\": 410,//msg.payload.data.mnc,\n    \"carrier\": msg.originalPayload.data.operatorName,\n    \"considerIp\": \"false\",\n    \"cellTowers\": [\n        {\n            \"cellId\": msg.originalPayload.data.cellid,\n            \"locationAreaCode\": msg.originalPayload.data.lac,\n            \"mobileCountryCode\": msg.originalPayload.data.mcc,\n            \"mobileNetworkCode\": 410, //msg.payload.data.mnc\n     }\n    ]\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "dependencies": [],
+        "x": 557.0000419616699,
+        "y": 284.0000343322754,
+        "wires": [
+            [
+                "206a0224.9001fe"
+            ]
+        ]
+    },
+    {
+        "id": "206a0224.9001fe",
+        "type": "http request",
+        "z": "21787462.a7059c",
+        "name": "",
+        "useAuth": false,
+        "username": "",
+        "password": "",
+        "encryption": "none",
+        "encryptObj": [
+            "username",
+            "password"
+        ],
+        "timeout": "",
+        "method": "POST",
+        "ret": "obj",
+        "url": "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyAi2LXTTovrYhOCrUxUMXjrO0qBGJXBXbw",
+        "tls": "",
+        "acceptUnauthorizedRequest": false,
+        "x": 845.5695037841797,
+        "y": 285.0000295639038,
+        "wires": [
+            [
+                "7091dd6e.e616a4"
+            ]
+        ]
+    },
+    {
+        "id": "708cf8cb.a93a68",
+        "type": "function",
+        "z": "21787462.a7059c",
+        "name": "",
+        "func": "\n\nmsg.originalPayload.data.location = {\n             longitude : msg.payload.location.lng,\n             latitude : msg.payload.location.lat,\n             };\nmsg.originalPayload.data.accuracy = msg.payload.accuracy,\nmsg.payload = msg.originalPayload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "dependencies": [],
+        "x": 1479.569480895996,
+        "y": 287.0000419616699,
+        "wires": [
+            [
+                "b88d4f0d.e0894"
+            ]
+        ]
+    },
+    {
+        "id": "7091dd6e.e616a4",
+        "type": "switch",
+        "z": "21787462.a7059c",
+        "name": "isError",
+        "property": "statusCode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "200",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 2,
+        "x": 1179.4480590820312,
+        "y": 288.9514503479004,
+        "wires": [
+            [
+                "708cf8cb.a93a68"
+            ],
+            [
+                "ac886435.746448"
+            ]
+        ]
+    },
+    {
+        "id": "ac886435.746448",
+        "type": "function",
+        "z": "21787462.a7059c",
+        "name": "Create Error Message",
+        "func": "var errorText;\n\nerrorText = \"Could not post message to Google API. \";\n\nif (msg.hasOwnProperty(\"payload\")) {\n    errorText += msg.statusCode + \" \" + JSON.stringify(msg.payload);\n}\n\nif (msg.hasOwnProperty(\"braceData\")) {\n    errorText += \"Parsed Message\" + JSON.stringify(msg.xirgoData);\n}\n\nvar errorMsg = {\n    payload : errorText\n}\n\nreturn [msg, errorMsg];",
+        "outputs": 1,
+        "noerr": 0,
+        "dependencies": [],
+        "x": 1262.4584350585938,
+        "y": 206.95145225524902,
+        "wires": [
+            [
+                "51523af7.ad12b4"
+            ]
+        ]
+    },
+    {
+        "id": "faabf3e8.8e615",
+        "type": "catch",
+        "z": "21787462.a7059c",
+        "name": "",
+        "scope": null,
+        "x": 844.447998046875,
+        "y": 69.9618148803711,
+        "wires": [
+            [
+                "6be4f463.be5adc"
+            ]
+        ]
+    },
+    {
+        "id": "6be4f463.be5adc",
+        "type": "function",
+        "z": "21787462.a7059c",
+        "name": "Create Error off Catch",
+        "func": "var errorMessage;\n\nerrorMessage = \"Could not send message to Google API. \";\n\nif (msg.hasOwnProperty(\"rawData\")) {\n    errorMessage += msg.rawData;\n}\n\nif (msg.hasOwnProperty(\"error\")) {\n    errorMessage += \" \" + msg.error;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "dependencies": [],
+        "x": 1072.447998046875,
+        "y": 68.95833587646484,
+        "wires": [
+            [
+                "51523af7.ad12b4"
+            ]
+        ]
+    },
+    {
+        "id": "51523af7.ad12b4",
+        "type": "subflow:fa07b5a2.555818",
+        "z": "21787462.a7059c",
+        "name": "",
+        "x": 1385.4549560546875,
+        "y": 69.9618148803711,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7b0021ab.8e1d5",
+        "type": "function",
+        "z": "21787462.a7059c",
+        "name": "Lookup CellID",
+        "func": "var properties = context.global.properties;\nmsg.originalPayload = Object.assign({},msg.payload);\nmsg.endpoint = '/objects/' +\n            'vertecore' + '/' +\n            'back-decompression-device' + '~' + 'dev' + '/' +\n            'backBrace' + '/_fetch_stream_values?' + \n            'streams=cellid&' + \n            'objects=' + msg.originalPayload.object +\n            '&start=2020-01-01T16:54:15.125Z'+ '&end='+ new Date().toISOString() +\n            '&limit=1',\n                 \nmsg.method = 'GET';\n\nmsg.payload = {};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "dependencies": [],
+        "x": 180.56944274902344,
+        "y": 507.2222080230713,
+        "wires": [
+            [
+                "74a10eda.a3b56",
+                "62ad0886.a7cba8"
+            ]
+        ]
+    },
+    {
+        "id": "62ad0886.a7cba8",
+        "type": "debug",
+        "z": "21787462.a7059c",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 209.56944274902344,
+        "y": 587.2222127914429,
+        "wires": []
+    },
+    {
+        "id": "74a10eda.a3b56",
+        "type": "dataflow-request",
+        "z": "21787462.a7059c",
+        "name": "",
+        "method": "use",
+        "endpoint": "",
+        "x": 453.06949615478516,
+        "y": 505.22222900390625,
+        "wires": [
+            [
+                "e36ea31.6797f6",
+                "10f795f5.616b3a"
+            ]
+        ]
+    },
+    {
+        "id": "e36ea31.6797f6",
+        "type": "debug",
+        "z": "21787462.a7059c",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 496.56947326660156,
+        "y": 572.2222127914429,
+        "wires": []
+    },
+    {
+        "id": "6e3d6029.e735b",
+        "type": "function",
+        "z": "21787462.a7059c",
+        "name": "Compare cellid",
+        "func": "var deviceId = msg.originalPayload.object;\nvar lastCID = msg.payload.values[deviceId].cellid[0];\nmsg.payload = lastCID[1];\n\nif (lastCID[1] != msg.originalPayload.data.cellid) {\n       return [msg, null];\n}\n    else {\n        return [null, msg];\n}\nreturn msg;",
+        "outputs": "2",
+        "noerr": 0,
+        "dependencies": [],
+        "x": 1003.5694274902344,
+        "y": 537.2221941947937,
+        "wires": [
+            [
+                "f0a2921.791537",
+                "356a13d5.8c2a3c"
+            ],
+            [
+                "f1730922.fff338"
+            ]
+        ]
+    },
+    {
+        "id": "f1730922.fff338",
+        "type": "function",
+        "z": "21787462.a7059c",
+        "name": "Prep Payload for DF",
+        "func": "msg.payload = Object.assign({},msg.originalPayload);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "dependencies": [],
+        "x": 1330.333351135254,
+        "y": 518.7778167724609,
+        "wires": [
+            [
+                "1a8669ca.e3e776",
+                "b88d4f0d.e0894"
+            ]
+        ]
+    },
+    {
+        "id": "f0a2921.791537",
+        "type": "debug",
+        "z": "21787462.a7059c",
+        "name": "Lookup new location",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 1291.8194427490234,
+        "y": 461.7221908569336,
+        "wires": []
+    },
+    {
+        "id": "1a8669ca.e3e776",
+        "type": "debug",
+        "z": "21787462.a7059c",
+        "name": "Pass to Registry",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 1168.333324432373,
+        "y": 692.8888621330261,
+        "wires": []
+    },
+    {
+        "id": "c2ab0a19.b665d8",
+        "type": "debug",
+        "z": "21787462.a7059c",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 188.3333282470703,
+        "y": 210.11114311218262,
+        "wires": []
+    },
+    {
+        "id": "10f795f5.616b3a",
+        "type": "function",
+        "z": "21787462.a7059c",
+        "name": "check for empty array",
+        "func": "var deviceId = msg.originalPayload.object;\nvar lastCID = msg.payload.values[deviceId].cellid;\n//msg.payload = lastCID;\n\nif (lastCID.length === 0) {\n       return [msg, null];\n}\n    else {\n        return [null, msg];\n}\n\n//msg.payload = ();\n\nreturn msg;\n\n// Array.isArray(yourVariable) && yourVariable.length === 0\n\n// lastCID === undefined || array.length === 0",
+        "outputs": "2",
+        "noerr": 0,
+        "dependencies": [],
+        "x": 723.2257232666016,
+        "y": 512.774525642395,
+        "wires": [
+            [
+                "f1730922.fff338"
+            ],
+            [
+                "6e3d6029.e735b"
+            ]
+        ]
+    }
+]
